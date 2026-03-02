@@ -28,6 +28,71 @@ function parseOrderDetails(products) {
   return matches.map((m) => `${m[2]},${m[1]}`).join('|') + '|';
 }
 
+const CANONICAL_REGIONS = [
+  'Riyadh',
+  'Mecca',
+  'Madinah',
+  'Eastern Province',
+  'Al Qassim',
+  'Asir',
+  'Tabuk',
+  'Hail',
+  'Northern Borders',
+  'Jazan',
+  'Najran',
+  'Al Bahah',
+  'Al Jouf',
+];
+
+const REGION_ALIASES = {
+  riyadh: 'Riyadh',
+  'riyadh region': 'Riyadh',
+  mecca: 'Mecca',
+  makkah: 'Mecca',
+  'makkah region': 'Mecca',
+  'mecca region': 'Mecca',
+  madinah: 'Madinah',
+  medina: 'Madinah',
+  'madinah region': 'Madinah',
+  'al madinah': 'Madinah',
+  'al madinah region': 'Madinah',
+  'eastern province': 'Eastern Province',
+  eastern: 'Eastern Province',
+  'eastern region': 'Eastern Province',
+  qassim: 'Al Qassim',
+  'al qassim': 'Al Qassim',
+  asir: 'Asir',
+  aseer: 'Asir',
+  tabuk: 'Tabuk',
+  hail: 'Hail',
+  'northern borders': 'Northern Borders',
+  'northern border': 'Northern Borders',
+  jazan: 'Jazan',
+  jizan: 'Jazan',
+  najran: 'Najran',
+  'al bahah': 'Al Bahah',
+  bahah: 'Al Bahah',
+  'al jouf': 'Al Jouf',
+  jouf: 'Al Jouf',
+  jawf: 'Al Jouf',
+};
+
+function normalizeSaudiRegion(region) {
+  const normalized = String(region || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
+
+  if (!normalized) return '';
+
+  if (REGION_ALIASES[normalized]) return REGION_ALIASES[normalized];
+
+  const exactMatch = CANONICAL_REGIONS.find(
+    (item) => item.toLowerCase() === normalized
+  );
+  return exactMatch || '';
+}
+
 /**
  * Map raw orders + AI translations into final CSV-ready row objects.
  */
@@ -49,7 +114,7 @@ export function mapOrderData(rawOrders, aiResults) {
       Address: ai.address || '',
       Address2: ai.address2 || extracted.shortAddress || '',
       City: ai.city || order.city || '',
-      State: ai.state || '',
+      State: normalizeSaudiRegion(ai.state),
       Zip: ai.zip || extracted.zipCode || '',
       Country: 'SA',
       ShipMethod: 'Shipping',
