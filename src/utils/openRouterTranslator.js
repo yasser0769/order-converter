@@ -26,7 +26,8 @@ Important rules:
 - For the address field, format as: "[Neighborhood English] District, [Street English] Street"
 - If neighborhood or street is missing, omit that part
 - The city should be in English
-- State should be the Saudi region (e.g., "Riyadh Region", "Makkah Region", "Eastern Region")
+- State must be EXACTLY one of these values only:
+  "Riyadh", "Mecca", "Madinah", "Eastern Province", "Al Qassim", "Asir", "Tabuk", "Hail", "Northern Borders", "Jazan", "Najran", "Al Bahah", "Al Jouf"
 - Return ONLY the JSON array, no other text or markdown`;
 
 /**
